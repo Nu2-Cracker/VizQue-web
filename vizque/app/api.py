@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
-import datetime
 import sys
 import json
 sys.path.append("/VizQue/vizque/app/nimlibs")
