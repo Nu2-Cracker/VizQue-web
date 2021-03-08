@@ -1,0 +1,14 @@
+__pycache__
+.idea
+tmp_result/
+*gv
+*svg
+vizque.sh
+uninstall.sh
+dist
+tmp_result
+vizque.egg-info
+.devcontainer
+.DS_Store
+nohup.out
+
