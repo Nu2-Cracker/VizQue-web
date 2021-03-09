@@ -7,7 +7,8 @@ import
   xmltree,
   tables,
   strutils,
-  JSON
+  JSON,
+  nimpy
 
 
 type
@@ -130,6 +131,8 @@ proc querygetter(query: string): seq[string] =
 #検索ワードの取得
 echo "Please enter to search word: "
 let reader =  readLine(stdin)
+
+
 create_node(reader, id)
 #from側のidをセット
 from_id = id

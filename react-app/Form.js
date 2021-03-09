@@ -3,21 +3,9 @@ import React, { useEffect, useState } from "react";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import {
-  Box,
-  Button,
-  Flex,
   Input,
   InputGroup,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Stack,
-  Text,
-  useDisclosure
 } from "@chakra-ui/react";
 
 const QueryContext = React.createContext({
