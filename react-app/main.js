@@ -1,28 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ThemeProvider } from "@chakra-ui/react";
+
 import VisReact from './visreact';
 
 import "./css/style.css"
-import AppForm from './Form.jsx';
+import Querys from './Form.js';
 
-function App(){
+function App() {
   return (
-    <div className="vis-react">
-      <VisReact />
+    <div>
+      <ThemeProvider>
+        <Querys />
+      </ThemeProvider>
+      <div className="vis-react">
+        <VisReact />
+      </div>
     </div>
+
   )
 }
 
-// function Form(){
-//   return (
-//     <div className="apps-Form">
-//       <AppForm />
-//     </div>
-//   )
-// }
 
-const FormSearch =  document.getElementById("research-form")
-ReactDOM.render(<AppForm />, FormSearch)
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
