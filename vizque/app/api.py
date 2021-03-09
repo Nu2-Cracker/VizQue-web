@@ -39,7 +39,6 @@ async def get_tst_query() -> dict:
 @app.post("/testquery", tags=["query"])
 async def get_test_query(q: dict) -> dict:
     query.append(q)
-    # print(query)
     return {
         "data": q,
         "message": "Get Query!!"
