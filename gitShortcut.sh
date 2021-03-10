@@ -1,5 +1,5 @@
 git pull origin main
 git add .
-git commit -m "update dev sh file"
+git commit -m "chenge name"
 git pull origin main
 git push origin main
