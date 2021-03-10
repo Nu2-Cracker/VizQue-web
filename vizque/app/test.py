@@ -21,9 +21,16 @@ import os
 # print("ファイルサイズ", os.path.getsize("/VizQue/react-app/jsonData/graph.json"))
 
 
-print(dir(vizque))
-a = vizque.run_vizque("イヌザメ")
+# print(dir(vizque))
+# a = vizque.run_vizque("イヌザメ")
+# print(len(a))
+# print("$$$$$$$$$$$")
+# b = vizque.run_vizque("オオメジロザメ")
+# print(b)
+
+
+a = [i for i in range(10)]
+
 print(a)
-print("$$$$$$$$$$$")
-b = vizque.run_vizque("オオメジロザメ")
-print("ノードサイズ", len(b.nodes))
+a[4] = 10000
+print(a)

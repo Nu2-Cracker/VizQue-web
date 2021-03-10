@@ -57,8 +57,9 @@ async def calc_network_get() -> dict:
 
 @app.post("/vizque", tags=["query"])
 async def calc_network_post(q: dict) -> dict:
-    query=q["data"]
-    vizque.run_vizque(str(query))
+    jsonData = vizque.run_vizque(str(q["data"]))
+    jsonData = json.loads(jsonData)
+    query[0] = jsonData
     return {
         "data": q,
         "message": "Get Query!!"

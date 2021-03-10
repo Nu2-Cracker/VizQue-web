@@ -288,7 +288,7 @@ proc test_case_B() =
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
 
 
-test_case_B()
+
 # nim c -r -o:./nimlibs/vizque ./nimlibs/vizque.nim
 # nim c --threads:on --app:lib --out:./nimlibs/vizque.so ./nimlibs/vizque
 
