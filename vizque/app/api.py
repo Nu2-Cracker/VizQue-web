@@ -1,10 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 import sys
 import json
 sys.path.append("/VizQue/vizque/app/nimlibs")
 import nowtime
+import vizque
+import os
 import objectCast
 
 
@@ -22,7 +24,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 
@@ -39,8 +41,20 @@ async def get_tst_query() -> dict:
 @app.post("/testquery", tags=["query"])
 async def get_test_query(q: dict) -> dict:
     query.append(q)
-    print(query)
+    print(q["data"])
     return {
         "data": q,
         "message": "Get Query!!"
     }
+    
+
+@app.post("/vizque", tags=["query"])
+async def calc_network(q: dict) -> dict:
+    print(q)
+    query=q["data"]
+    vizque.run_vizque(str(query))
+    return {
+        "data": q,
+        "message": "Get Query!!"
+    }
+    

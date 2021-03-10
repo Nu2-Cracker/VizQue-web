@@ -4,12 +4,11 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import {
   Input,
-  InputGroup,
-  Stack,
+  InputGroup
 } from "@chakra-ui/react";
 
 const QueryContext = React.createContext({
-  query: [], fetchQuery: () => { }
+  query: "", fetchQuery: () => { }
 })
 
 function GetQuery() {
@@ -21,16 +20,13 @@ function GetQuery() {
   }
 
   const handleSubmit = (event) => {
-    const newQuery = {
-      "data": item
-    }
+    const newQuery = { "data": item }
 
-    fetch("http://127.0.0.1:8353/testquery", {
+    fetch("http://127.0.0.1:8353/vizque", {
       method: "POST",
       headers: { "Context-Type": "application/json" },
       body: JSON.stringify(newQuery)
     }).then(fetchQuery)
-      .then(data => console.log(data))
   }
 
   return (
@@ -49,25 +45,8 @@ function GetQuery() {
 }
 
 export default function Querys() {
-  const [query, setQuery] = useState([])
-  const fetchQuery = async () => {
-    const response = await fetch("http://127.0.0.1:8353/testquery")
-    const query = await response.json()
-    setQuery(query.data)
-  }
-
-  useEffect(() => {
-    fetchQuery()
-  }, [])
 
   return (
-    <QueryContext.Provider value={{ query, fetchQuery }}>
-      <GetQuery />
-      <Stack spacing={5}>
-        {query.map((q) => (
-          <b>{q.data}</b>
-        ))}
-      </Stack>
-    </QueryContext.Provider>
+    <GetQuery />
   )
 }

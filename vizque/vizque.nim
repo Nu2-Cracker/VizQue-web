@@ -1,5 +1,4 @@
 # nim c -o:output_vizque -r vizque.nim
-#python にすると追記になる
 import
   httpClient,
   strtabs,
@@ -8,8 +7,7 @@ import
   xmltree,
   tables,
   strutils,
-  JSON,
-  nimpy
+  JSON
 
 
 type
@@ -42,16 +40,6 @@ var
 
 #オブジェクト定義
 var G:GraphDatas = new GraphDatas
-var init_G = G
-
-
-proc init_graphData() = 
-  #ファイルの初期化
-  let to_json = %* init_G
-  let f = open("/VizQue/react-app/jsonData/graph.json", FileMode.fmWrite)
-  #jsonファイルに書き込み
-  f.write(to_json.pretty(indent=5))
-  f.close()
 
 proc create_node(query: string, id: int) =
   #queryからnodeを作成する
@@ -74,8 +62,6 @@ proc create_edge(from_id: int, to_id: int) =
   G.edges.add(edge)
   #edgeの初期化
   edge = edge_init
-
-
 
 
 proc outputGraphData(nodes: SecTables, edges: SecTables) =
@@ -142,69 +128,27 @@ proc querygetter(query: string): seq[string] =
 
 
 #検索ワードの取得
-# echo "Please enter to search word: "
-# let reader =  readLine(stdin)
+echo "Please enter to search word: "
+let reader =  readLine(stdin)
+create_node(reader, id)
+#from側のidをセット
+from_id = id
+
+
+var querys: seq[string] = querygetter(reader)
+
+for query in querys:
+  #from_idは、G.nodesのラベルとqueryが一致するものの
+  #idを使用
+  var graph_data = G.nodes #G.nodesをdeep copy
+  for n in graph_data:
+    if n["label"] == query:
+      from_id = parseInt(n["id"])
+      var _ = querygetter(query)
 
 
 
-proc run_vizque(reader: string) {.exportpy.} =
-  # G = init_G #初期化
-  # init_graphData() #初期化
-  create_node(reader, id)
-  #from側のidをセット
-  from_id = id
 
-
-  var querys: seq[string] = querygetter(reader)
-
-  for query in querys:
-    #from_idは、G.nodesのラベルとqueryが一致するものの
-    #idを使用
-    var graph_data = G.nodes #G.nodesをdeep copy
-    for n in graph_data:
-      if n["label"] == query:
-        from_id = parseInt(n["id"])
-        var _ = querygetter(query)
-
-  G = new GraphDatas
-
-
-#test用
-#内容
-# インスタンスの初期化
-proc run_vizque_test(reader: string) =
-  # G = init_G #初期化
-  init_graphData() #初期化
-  create_node(reader, id)
-  #from側のidをセット
-  from_id = id
-
-
-  var querys: seq[string] = querygetter(reader)
-
-  for query in querys:
-    #from_idは、G.nodesのラベルとqueryが一致するものの
-    #idを使用
-    var graph_data = G.nodes #G.nodesをdeep copy
-    for n in graph_data:
-      if n["label"] == query:
-        from_id = parseInt(n["id"])
-        var _ = querygetter(query)
-
-  echo "node size is " , len(G.nodes)
-  echo "edge size is " , len(G.edges)
-  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
-  G = new GraphDatas
-
-
-proc test_case_A() = 
-  run_vizque_test("イヌザメ")
-  run_vizque_test("ホホジロザメ")
-  run_vizque_test("アオザメ")
-  run_vizque_test("イタリア")
-
-# nim c -r -o:./nimlibs/vizque ./nimlibs/vizque.nim
-# nim c --threads:on --app:lib --out:./nimlibs/vizque.so ./nimlibs/vizque
 
 
 
