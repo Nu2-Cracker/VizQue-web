@@ -1,5 +1,4 @@
-import React, { Component, Fragment } from 'react';
-import { async } from 'regenerator-runtime';
+import React, { Component, Fragment, useEffect } from 'react';
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import Graph from 'vis-react';
@@ -59,12 +58,7 @@ let options = {
   }
 };
 
-function dataGraph() {
-  const [datas, setDatas] = useState([]);
-  const fetchDatas = async () => {
-    const response = await fetch("http://127.0.0.1:8353/vizque")
-  }
-}
+
 
 
 export default class VisReact extends Component {
@@ -96,10 +90,20 @@ export default class VisReact extends Component {
       network: null
     };
 
-
     this.events.click = this.events.click.bind(this);
     this.redirectToLearn = this.redirectToLearn.bind(this);
     this.getNetwork = this.getNetwork.bind(this);
+
+  }
+
+  componentDidMount() {
+    return fetch("http://127.0.0.1:8353/vizque")
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          graph: responseJson.data[0]
+        })
+      })
   }
 
   redirectToLearn(params, searchData) {

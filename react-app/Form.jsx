@@ -1,5 +1,5 @@
 //検索クエリの取得
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import {
   Input,
