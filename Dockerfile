@@ -8,7 +8,7 @@ RUN mkdir /VizQue && \
   mkdir -p /VizQue/react-app
 
 WORKDIR /VizQue/vizque
-COPY ./vizque/vizque.nim /VizQue/vizque
+# COPY ./vizque/vizque.nim /VizQue/vizque
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update &&\
   apt-get upgrade -y && \
@@ -85,7 +85,7 @@ RUN sh build.sh && \
 WORKDIR /VizQue/vizque
 ENV PATH  /nim_bild/nim-1.4.2/bin:$PATH
 
-
+RUN /nim_bild/nim-1.4.2/bin/nimble install nimpy -y
 
 WORKDIR /VizQue
 SHELL [ "bash", "-c" ]

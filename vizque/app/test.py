@@ -14,8 +14,16 @@ import os
 
 
 
+# print(dir(vizque))
+# vizque.run_vizque("イヌザメ")
+# print("ファイルサイズ", os.path.getsize("/VizQue/react-app/jsonData/graph.json"))
+# vizque.run_vizque("オオメジロザメ")
+# print("ファイルサイズ", os.path.getsize("/VizQue/react-app/jsonData/graph.json"))
+
+
 print(dir(vizque))
-vizque.run_vizque("イヌザメ")
-print("ファイルサイズ", os.path.getsize("/VizQue/react-app/jsonData/graph.json"))
-vizque.run_vizque("オオメジロザメ")
-print("ファイルサイズ", os.path.getsize("/VizQue/react-app/jsonData/graph.json"))
+a = vizque.run_vizque("イヌザメ")
+print(a)
+print("$$$$$$$$$$$")
+b = vizque.run_vizque("オオメジロザメ")
+print("ノードサイズ", len(b.nodes))

@@ -42,16 +42,8 @@ var
 
 #オブジェクト定義
 var G:GraphDatas = new GraphDatas
-var init_G = G
 
 
-proc init_graphData() = 
-  #ファイルの初期化
-  let to_json = %* init_G
-  let f = open("/VizQue/react-app/jsonData/graph.json", FileMode.fmWrite)
-  #jsonファイルに書き込み
-  f.write(to_json.pretty(indent=5))
-  f.close()
 
 proc create_node(query: string, id: int) =
   #queryからnodeを作成する
@@ -135,7 +127,7 @@ proc querygetter(query: string): seq[string] =
 
     searchQuery.add(relationQuery)
   #jsonに出力
-  outputGraphData(G.nodes, G.edges)
+  # outputGraphData(G.nodes, G.edges)
   node_permission = true #初期化
 
   return searchQuery #検索クエリ候補を返す
@@ -147,9 +139,8 @@ proc querygetter(query: string): seq[string] =
 
 
 
-proc run_vizque(reader: string) {.exportpy.} =
-  # G = init_G #初期化
-  # init_graphData() #初期化
+proc run_vizque(reader: string): string {.exportpy.} =
+  G = new GraphDatas #初期化
   create_node(reader, id)
   #from側のidをセット
   from_id = id
@@ -165,44 +156,139 @@ proc run_vizque(reader: string) {.exportpy.} =
       if n["label"] == query:
         from_id = parseInt(n["id"])
         var _ = querygetter(query)
+  
+  graph["nodes"] = G.nodes
+  graph["edges"] = G.edges
+  let to_json = %* graph
+  var jsonData: string = to_json.pretty(indent=5)
+  return jsonData
 
-  G = new GraphDatas
+
 
 
 #test用
 #内容
 # インスタンスの初期化
-proc run_vizque_test(reader: string) =
-  # G = init_G #初期化
-  init_graphData() #初期化
-  create_node(reader, id)
-  #from側のidをセット
-  from_id = id
-
-
-  var querys: seq[string] = querygetter(reader)
-
-  for query in querys:
-    #from_idは、G.nodesのラベルとqueryが一致するものの
-    #idを使用
-    var graph_data = G.nodes #G.nodesをdeep copy
-    for n in graph_data:
-      if n["label"] == query:
-        from_id = parseInt(n["id"])
-        var _ = querygetter(query)
-
-  echo "node size is " , len(G.nodes)
-  echo "edge size is " , len(G.edges)
-  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
-  G = new GraphDatas
-
 
 proc test_case_A() = 
+  proc run_vizque_test(reader: string) =
+    # G = init_G #初期化
+    create_node(reader, id)
+    #from側のidをセット
+    from_id = id
+
+
+    var querys: seq[string] = querygetter(reader)
+
+    for query in querys:
+      #from_idは、G.nodesのラベルとqueryが一致するものの
+      #idを使用
+      var graph_data = G.nodes #G.nodesをdeep copy
+      for n in graph_data:
+        if n["label"] == query:
+          from_id = parseInt(n["id"])
+          var _ = querygetter(query)
+
+    echo "node size is " , len(G.nodes)
+    echo "edge size is " , len(G.edges)
+    echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    G = new GraphDatas
+
   run_vizque_test("イヌザメ")
   run_vizque_test("ホホジロザメ")
   run_vizque_test("アオザメ")
   run_vizque_test("イタリア")
 
+
+
+proc test_case_B() = 
+  proc run_vizque_test2(reader: string): string {.exportpy.} =
+    
+    proc querygetter_noJsonOutput(query: string): seq[string] =
+      #検索結果を格納するsequence
+      var searchQuery = newSeq[string]()
+      #空白を埋めてget用URLの作成
+      var rep_query = query.replace(re"\s+", "%20")
+      var url = "http://www.google.com/complete/search?hl=en&q=${query}&output=toolbar" % {"query": rep_query}.newStringTable
+
+      # httpクライエントの作成
+      let client = newHttpClient()
+      let response = client.request(url)
+      #bodyを取得
+      var body: string = response.body
+      #xmlをパース
+      let xmls = parseXml(body)
+      #suggestion タグの取得
+      var tag_suggestion = xmls.findAll("suggestion")
+      tag_suggestion = tag_suggestion[1..^1] #頭はqueryなので含まない
+
+      var graph_data = G.nodes #G.nodesをdeep copy
+      for tag in tag_suggestion:
+        let relationQuery = tag.attr("data") #tagからdata属性(関連キーワード)を取得
+        to_id = check_label(relationQuery, graph_data) #既存のlabelと一致するかチェック
+
+        if node_permission:
+          create_node(relationQuery, to_id) #trueならrelationqueryからnodeを作成
+        #from_idをfrom_id, to_idをto_idとしてedgeを作成
+        create_edge(from_id, to_id)
+
+        searchQuery.add(relationQuery)
+      #jsonに出力
+      # outputGraphData(G.nodes, G.edges)
+      node_permission = true #初期化
+
+      return searchQuery #検索クエリ候補を返す
+
+
+    G = new GraphDatas #初期化
+    create_node(reader, id)
+    #from側のidをセット
+    from_id = id
+    var querys: seq[string] = querygetter_noJsonOutput(reader)
+
+    for query in querys:
+      #from_idは、G.nodesのラベルとqueryが一致するものの
+      #idを使用
+      var graph_data = G.nodes #G.nodesをdeep copy
+      for n in graph_data:
+        if n["label"] == query:
+          from_id = parseInt(n["id"])
+          var _ = querygetter_noJsonOutput(query)
+    echo "$$$$$$$$$$$$$$$$$$$$$"
+    echo "node size is " , len(G.nodes)
+    echo "edge size is " , len(G.edges)
+    echo "$$$$$$$$$$$$$$$$$$$$$"
+    graph["nodes"] = G.nodes
+    graph["edges"] = G.edges
+    let to_json = %* graph
+    var jsonData: string = to_json.pretty(indent=5)
+    return jsonData
+    # return G
+    
+
+  
+  let a = run_vizque_test2("イヌザメ")
+  echo "node size is " , len(a)
+  # echo "edge size is " , len(a)
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
+
+  let b = run_vizque_test2("ホホジロザメ")
+  echo "node size is " , len(b)
+  # echo "edge size is " , len(b)
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
+
+  let c = run_vizque_test2("アオザメ")
+  echo "node size is " , len(c)
+  # echo "edge size is " , len(c)
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
+
+  let d = run_vizque_test2("イタリア")
+  echo "node size is " , len(d)
+  # echo "edge size is " , len(d.edges)
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@"
+
+
+test_case_B()
 # nim c -r -o:./nimlibs/vizque ./nimlibs/vizque.nim
 # nim c --threads:on --app:lib --out:./nimlibs/vizque.so ./nimlibs/vizque
 

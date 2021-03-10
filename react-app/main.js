@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ThemeProvider } from "@chakra-ui/react";
 
-import VisReact from './visreact';
+import VisReact from './visreact.jsx';
 
 import "./css/style.css"
-import Querys from './Form.js';
+import Querys from './Form.jsx';
 
 function App() {
   return (

@@ -1,7 +1,11 @@
 import React, { Component, Fragment } from 'react';
+import { async } from 'regenerator-runtime';
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import Graph from 'vis-react';
 import initialGraph from "./jsonData/graph.json"
 
+//optionこそjsonに書いて読み込めばいいのでは
 let options = {
   layout: {
     randomSeed: 12,
@@ -55,51 +59,58 @@ let options = {
   }
 };
 
+function dataGraph() {
+  const [datas, setDatas] = useState([]);
+  const fetchDatas = async () => {
+    const response = await fetch("http://127.0.0.1:8353/vizque")
+  }
+}
 
 
 export default class VisReact extends Component {
-  setState(stateObj){
+  setState(stateObj) {
     if (this.mounted) {
       super.setState(stateObj);
+
     }
   }
 
-  componentWillMount(){
+  componentWillMount() {
     this.mounted = true;
   }
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.events = {
       click: function (event) {
-
         this.redirectToLearn(event, this.props.searchData);
-
       }
     };
-
+    // io => からhttpresponseでのgraphデータ取得に変更
     let newGraph = initialGraph;
 
+    //this.state.graphで値をセットするのが理想かな
     this.state = {
       graph: newGraph,
       style: { width: "1500px", height: "800px" },
       network: null
     };
 
+
     this.events.click = this.events.click.bind(this);
     this.redirectToLearn = this.redirectToLearn.bind(this);
     this.getNetwork = this.getNetwork.bind(this);
   }
 
-  redirectToLearn(params, searchData){
+  redirectToLearn(params, searchData) {
     let index = this.state.network.getNodeAt(params.pointer.DOM);
     let url = this.state.graph.nodes[index]["url"];
     window.open(url, '_blank')
   }
 
 
-  getNetwork(data){
-    this.setState({network: data})
+  getNetwork(data) {
+    this.setState({ network: data })
   };
 
 
@@ -108,9 +119,9 @@ export default class VisReact extends Component {
       <Fragment>
         <div className="vis-react-title">vis react</div>
         <Graph
-          graph = {this.state.graph}
+          graph={this.state.graph}
           style={this.state.style}
-          options = {options}
+          options={options}
           getNetwork={this.getNetwork}
           events={this.events}
           vis={(vis) => (this.vis = vis)}

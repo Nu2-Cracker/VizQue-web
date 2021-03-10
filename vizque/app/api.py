@@ -17,7 +17,10 @@ origins = [
     "0.0.0.0:5555"
 ]
 
-query = [{}]
+query = [{
+     "edges": [],
+     "nodes": []
+}]
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,11 +49,14 @@ async def get_test_query(q: dict) -> dict:
         "data": q,
         "message": "Get Query!!"
     }
+
+@app.get("/vizque", tags=["query"])
+async def calc_network_get() -> dict:
+    return {"data": query}
     
 
 @app.post("/vizque", tags=["query"])
-async def calc_network(q: dict) -> dict:
-    print(q)
+async def calc_network_post(q: dict) -> dict:
     query=q["data"]
     vizque.run_vizque(str(query))
     return {
