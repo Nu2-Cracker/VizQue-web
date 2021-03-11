@@ -3,7 +3,7 @@
 #ファイルサイズ
 import sys
 import json
-sys.path.append("/VizQue/vizque/app/nimlibs")
+sys.path.append("/prj/server/app//nimlibs")
 # import nowtime
 # s = nowtime.nowtime()
 # a = dir(s['timezone'])

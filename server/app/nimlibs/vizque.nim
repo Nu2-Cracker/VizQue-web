@@ -69,20 +69,20 @@ proc create_edge(from_id: int, to_id: int) =
 
 
 
+#no use
+# proc outputGraphData(nodes: SecTables, edges: SecTables) =
+#   #jsonに結果を出力する
+#   graph["nodes"] = nodes
+#   graph["edges"] = edges
 
-proc outputGraphData(nodes: SecTables, edges: SecTables) =
-  #jsonに結果を出力する
-  graph["nodes"] = nodes
-  graph["edges"] = edges
+#   block:
+#     #json用オブジェクトの作成
+#     let to_json = %* graph
+#     let f = open("/VizQue/react-app/jsonData/graph.json", FileMode.fmWrite)
+#     #jsonファイルに書き込み
+#     f.write(to_json.pretty(indent=5))
+#     f.close()
 
-  block:
-    #json用オブジェクトの作成
-    let to_json = %* graph
-    let f = open("/VizQue/react-app/jsonData/graph.json", FileMode.fmWrite)
-    #jsonファイルに書き込み
-    f.write(to_json.pretty(indent=5))
-    f.close()
-      
 
 proc check_label(query: string, node:SecTables ): int =
   #既存のlabelと一致するかチェック=>一致する場合,
@@ -290,7 +290,7 @@ proc test_case_B() =
 
 
 # nim c -r -o:./nimlibs/vizque ./nimlibs/vizque.nim
-# nim c --threads:on --app:lib --out:./nimlibs/vizque.so ./nimlibs/vizque
+# nim c --threads:on --app:lib --out:vizque.so vizque
 
 
 

@@ -44,7 +44,6 @@ function GetQuery() {
 }
 
 export default function Querys() {
-
   return (
     <GetQuery />
   )

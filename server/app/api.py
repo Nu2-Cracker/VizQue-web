@@ -3,7 +3,7 @@ from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 import sys
 import json
-sys.path.append("/VizQue/vizque/app/nimlibs")
+sys.path.append("/prj/server/app/nimlibs")
 import nowtime
 import vizque
 import os

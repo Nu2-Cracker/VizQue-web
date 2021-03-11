@@ -2,7 +2,7 @@ import React, { Component, Fragment, useEffect } from 'react';
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import Graph from 'vis-react';
-import initialGraph from "./jsonData/graph.json"
+// import initialGraph from "./jsonData/graph.json"
 
 //optionこそjsonに書いて読み込めばいいのでは
 let options = {
@@ -81,7 +81,10 @@ export default class VisReact extends Component {
       }
     };
     // io => からhttpresponseでのgraphデータ取得に変更
-    let newGraph = initialGraph;
+    let newGraph = {
+      "edges": [],
+      "nodes": []
+    };
 
     //this.state.graphで値をセットするのが理想かな
     this.state = {

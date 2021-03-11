@@ -1,0 +1,14 @@
+version: "2"
+services:
+  vizque_web:
+    image: vizque_web_img
+    container_name: web_app
+    build: .
+    volumes:
+      - ./vizque:/VizQue/vizque
+      - ./react-app:/VizQue/react-app
+    ports:
+      - "5555:5555"
+    tty: true
+    stdin_open: true
+    privileged: true

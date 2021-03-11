@@ -10,4 +10,4 @@ proc nowtime(): string {.exportpy.} =
   return nowStr
 
 
-# nim c --threads:on --app:lib --out:nowtime.so nowtime
+# nim c --threads:on --app:lib --out:nowtime.build.so nowtime
