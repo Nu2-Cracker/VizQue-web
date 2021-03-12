@@ -4,8 +4,8 @@ docker-compose up --build -d
 docker-compose exec -w /prj/server/app/nimlibs nimslogic  sh -c 'nim c --threads:on --app:lib --out:nowtime.so nowtime' && \
 docker-compose exec -w /prj/server/app/nimlibs nimslogic  sh -c 'nim c --threads:on --app:lib --out:vizque.so vizque' && \
 docker-compose exec front sh -c  'npm install'
-figlet Dev-Env
-figlet Completed.
+docker-compose exec nimslogic  sh -c 'figlet Dev-Env && figlet Completed.'
+
 
 #実行後
 
