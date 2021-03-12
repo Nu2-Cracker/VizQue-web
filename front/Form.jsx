@@ -1,5 +1,5 @@
 //検索クエリの取得
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   Input,
@@ -21,11 +21,13 @@ function GetQuery() {
   const handleSubmit = (event) => {
     const newQuery = { "data": item }
 
-    fetch("http://127.0.0.1:8353/vizque", {
-      method: "POST",
-      headers: { "Context-Type": "application/json" },
-      body: JSON.stringify(newQuery)
-    }).then(fetchQuery)
+    useEffect(() => {
+      fetch("http://127.0.0.1:8353/vizque", {
+        method: "POST",
+        headers: { "Context-Type": "application/json" },
+        body: JSON.stringify(newQuery)
+      }).then(fetchQuery)
+    },[])
   }
 
   return (
