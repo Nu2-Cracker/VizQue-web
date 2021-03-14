@@ -21,13 +21,11 @@ function GetQuery() {
   const handleSubmit = (event) => {
     const newQuery = { "data": item }
 
-    useEffect(() => {
-      fetch("http://127.0.0.1:8353/vizque", {
-        method: "POST",
-        headers: { "Context-Type": "application/json" },
-        body: JSON.stringify(newQuery)
-      }).then(fetchQuery)
-    },[])
+    fetch("http://127.0.0.1:8353/vizque", {
+      method: "POST",
+      headers: { "Context-Type": "application/json" },
+      body: JSON.stringify(newQuery)
+    }).then(fetchQuery)
   }
 
   return (
