@@ -69,21 +69,6 @@ proc create_edge(from_id: int, to_id: int) =
 
 
 
-#no use
-# proc outputGraphData(nodes: SecTables, edges: SecTables) =
-#   #jsonに結果を出力する
-#   graph["nodes"] = nodes
-#   graph["edges"] = edges
-
-#   block:
-#     #json用オブジェクトの作成
-#     let to_json = %* graph
-#     let f = open("/VizQue/react-app/jsonData/graph.json", FileMode.fmWrite)
-#     #jsonファイルに書き込み
-#     f.write(to_json.pretty(indent=5))
-#     f.close()
-
-
 proc check_label(query: string, node:SecTables ): int =
   #既存のlabelと一致するかチェック=>一致する場合,
   #to_id=既存のid, no=> to_id=現在のid+1を返す
@@ -130,6 +115,7 @@ proc querygetter(query: string): seq[string] =
   # outputGraphData(G.nodes, G.edges)
   node_permission = true #初期化
 
+  #検索語句返さずにaddしたほうが..
   return searchQuery #検索クエリ候補を返す
 
 

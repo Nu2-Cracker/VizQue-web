@@ -30,6 +30,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+print(query)
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
@@ -43,6 +44,7 @@ async def get_tst_query() -> dict:
 
 @app.post("/testquery", tags=["query"])
 async def get_test_query(q: dict) -> dict:
+    #iteratorでlocal varianceに変化があればgetで呼ばれるのだろうか
     query.append(q)
     print(q["data"])
     return {
