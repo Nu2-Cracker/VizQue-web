@@ -64,4 +64,3 @@ async def calc_network_post(q: dict) -> dict:
         "data": q,
         "message": "Get Query!!"
     }
-    

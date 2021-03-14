@@ -38,6 +38,7 @@ function GetQuery() {
           aria-label="Add a search query"
           onChange={handleInput}
         />
+        <button type="submit">Show</button>
       </InputGroup>
     </form>
   )
