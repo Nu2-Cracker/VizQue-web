@@ -22,6 +22,7 @@ type
     edges: SecTables
 
 
+
 var
   node: QueryDatas = initTable[string, string]()
   node_init = node
@@ -30,26 +31,22 @@ var
   graph = initTable[string, SecTables]()
   # querylist: seq[string] = newSeq[string]()
   #Node
-  id: int = 0
+  node_id: int = 0
   node_permission = true
   #edge
   from_id: int = 0
   to_id: int = 0
-
-
-
-
 
 #オブジェクト定義
 var G:GraphDatas = new GraphDatas
 
 
 
-proc create_node(query: string, id: int) =
+proc create_node(query: string, node_id: int) =
   #queryからnodeを作成する
 
   #ノードの作成
-  node["id"] = $id
+  node["id"] = $node_id
   node["label"] = query
   node["url"] = "https://www.google.com/search?q=${query}" % {"query": query}.newStringTable
   #nodesに格納
@@ -70,18 +67,7 @@ proc create_edge(from_id: int, to_id: int) =
 
 
 #no use
-# proc outputGraphData(nodes: SecTables, edges: SecTables) =
-#   #jsonに結果を出力する
-#   graph["nodes"] = nodes
-#   graph["edges"] = edges
 
-#   block:
-#     #json用オブジェクトの作成
-#     let to_json = %* graph
-#     let f = open("/VizQue/react-app/jsonData/graph.json", FileMode.fmWrite)
-#     #jsonファイルに書き込み
-#     f.write(to_json.pretty(indent=5))
-#     f.close()
 
 
 proc check_label(query: string, node:SecTables ): int =
@@ -92,8 +78,8 @@ proc check_label(query: string, node:SecTables ): int =
       node_permission = false #Nodeは作成しない
       return parseInt(n["id"])
 
-  inc(id)
-  return id
+  inc(node_id)
+  return node_id
 
 
 
@@ -126,22 +112,14 @@ proc querygetter(query: string): seq[string] =
     create_edge(from_id, to_id)
 
     searchQuery.add(relationQuery)
-  #jsonに出力
-  # outputGraphData(G.nodes, G.edges)
   node_permission = true #初期化
 
   return searchQuery #検索クエリ候補を返す
 
 
-
-
-proc run_vizque(reader: string): string {.exportpy.} =
-  G = new GraphDatas #初期化
-  create_node(reader, id)
+proc createGraph_SearchQuery(reader: string): seq[string]=
   #from側のidをセット
-  from_id = id
-
-
+  from_id = node_id
   var querys: seq[string] = querygetter(reader)
 
   for query in querys:
@@ -151,22 +129,49 @@ proc run_vizque(reader: string): string {.exportpy.} =
     for n in graph_data:
       if n["label"] == query:
         from_id = parseInt(n["id"])
-        var _ = querygetter(query)
-  
+        var res = querygetter(query)
+
+  # queryはオブジェクト定義してオブジェクトに入れる方がいいかも
+  result=querys
+
+
+#再起で書いてループ回数を指定するようにするか
+
+proc run_vizque(reader: string, level: string): string {.exportpy.} =
+  G = new GraphDatas #初期化
+  var l: string = level
+  if l == "":
+    l = "2"
+  create_node(reader, node_id)
+
+
+  var querys = createGraph_SearchQuery(reader)
+  var i=2
+
+  while i < parseInt(l):
+    var query_sets = newSeq[string]()
+    for i in querys:
+      let q = createGraph_SearchQuery(i)
+      if len(q) != 0:
+        for j in q:
+          if j notin query_sets:
+            query_sets.add(j)
+    querys = query_sets
+    inc i
+
   graph["nodes"] = G.nodes
   graph["edges"] = G.edges
   let to_json = %* graph
   var jsonData: string = to_json.pretty(indent=5)
   return jsonData
 
-
-
+# echo data
 
 #test用
 #内容
 # インスタンスの初期化
 
-# nim c -r -o:./nimlibs/vizque ./nimlibs/vizque.nim
+# nim c -r -o:/vizque ./vizque.nim
 # nim c --threads:on --app:lib --out:vizque.so vizque
 
 

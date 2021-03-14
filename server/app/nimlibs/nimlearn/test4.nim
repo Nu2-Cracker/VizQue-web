@@ -17,3 +17,7 @@ iterator numbers10(): int {.exportpy.} =
 
 
 # nim c --threads:on --app:lib --out:test4.so test4
+#[
+x=`find . -perm /u=x,g=x,o=x -type f` && \
+rm $x
+]#

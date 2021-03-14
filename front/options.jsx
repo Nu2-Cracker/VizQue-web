@@ -1,6 +1,6 @@
 let options = {
   layout: {
-    randomSeed: 12,
+    randomSeed: 350,
     hierarchical: false
   },
   nodes: {
@@ -32,13 +32,16 @@ let options = {
     }
   },
   physics: {
-    barnesHut: {
-      gravitationalConstant: -30000,
-      centralGravity: 1,
-      springLength: 150,
-      avoidOverlap: -1
+    forceAtlas2Based: {
+      gravitationalConstant: -26,
+      centralGravity: 0.005,
+      springLength: 230,
+      springConstant: 0.18,
     },
-    stabilization: { iterations: 2500 }
+    maxVelocity: 146,
+    solver: "forceAtlas2Based",
+    timestep: 0.35,
+    stabilization: { iterations: 150 },
   },
   interaction: {
     hover: true,
