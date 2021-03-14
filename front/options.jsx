@@ -1,10 +1,9 @@
 let options = {
   layout: {
     randomSeed: 350,
-    hierarchical: false
+    hierarchical: true
   },
   nodes: {
-
     shape: "box",
     size: 30,
     borderWidth: 1.5,
@@ -21,6 +20,7 @@ let options = {
     }
   },
   edges: {
+    length: 10500000,
     width: 0.5,
     color: {
       color: "#D3D3D3",
@@ -32,16 +32,14 @@ let options = {
     }
   },
   physics: {
-    forceAtlas2Based: {
-      gravitationalConstant: -26,
-      centralGravity: 0.005,
-      springLength: 230,
-      springConstant: 0.18,
-    },
+    enabled: false,
     maxVelocity: 146,
-    solver: "forceAtlas2Based",
+    solver: "repulsion",
+    repulsion: {
+      nodeDistance: 1000000 // Put more distance between the nodes.
+    },
     timestep: 0.35,
-    stabilization: { iterations: 150 },
+    stabilization: { iterations: 15000 },
   },
   interaction: {
     hover: true,
