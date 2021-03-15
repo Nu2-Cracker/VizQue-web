@@ -102,17 +102,18 @@ proc querygetter(query: string): seq[string] =
   tag_suggestion = tag_suggestion[1..^1] #頭はqueryなので含まない
 
   var graph_data = G.nodes #G.nodesをdeep copy
+
   for tag in tag_suggestion:
     let relationQuery = tag.attr("data") #tagからdata属性(関連キーワード)を取得
-    to_id = check_label(relationQuery, graph_data) #既存のlabelと一致するかチェック
 
+    to_id = check_label(relationQuery, graph_data) #既存のlabelと一致するかチェック
     if node_permission:
       create_node(relationQuery, to_id) #trueならrelationqueryからnodeを作成
     #from_idをfrom_id, to_idをto_idとしてedgeを作成
     create_edge(from_id, to_id)
 
     searchQuery.add(relationQuery)
-  node_permission = true #初期化
+    node_permission = true #初期化
 
   return searchQuery #検索クエリ候補を返す
 
@@ -122,6 +123,7 @@ proc createGraph_SearchQuery(reader: string): seq[string]=
   from_id = node_id
   var querys: seq[string] = querygetter(reader)
 
+
   for query in querys:
     #from_idは、G.nodesのラベルとqueryが一致するものの
     #idを使用
@@ -129,7 +131,7 @@ proc createGraph_SearchQuery(reader: string): seq[string]=
     for n in graph_data:
       if n["label"] == query:
         from_id = parseInt(n["id"])
-        var res = querygetter(query)
+        var _ = querygetter(query)
 
   # queryはオブジェクト定義してオブジェクトに入れる方がいいかも
   result=querys
@@ -165,7 +167,8 @@ proc run_vizque(reader: string, level: string): string {.exportpy.} =
   var jsonData: string = to_json.pretty(indent=5)
   return jsonData
 
-# echo data
+
+
 
 #test用
 #内容
