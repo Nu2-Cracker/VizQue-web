@@ -1,7 +1,16 @@
 let options = {
   layout: {
     randomSeed: 350,
-    hierarchical: true
+    improvedLayout:true,
+    clusterThreshold: 1500,
+    hierarchical: {
+      enabled:false,
+      levelSeparation: 150,
+      nodeSpacing: 5000,
+      treeSpacing: 20000,
+      direction: "LR"
+
+    }
   },
   nodes: {
     shape: "box",
@@ -39,7 +48,9 @@ let options = {
       nodeDistance: 1000000 // Put more distance between the nodes.
     },
     timestep: 0.35,
-    stabilization: { iterations: 15000 },
+    stabilization: {
+      enabled: true,
+      iterations: 15000 },
   },
   interaction: {
     hover: true,

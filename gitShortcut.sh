@@ -1,5 +1,5 @@
 git pull origin main
 git add .
-git commit -m "change node distance"
+git commit -m "update"
 git pull origin main
 git push origin main

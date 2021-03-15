@@ -20,6 +20,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-loadingg": "^1.7.2",
     "regenerator-runtime": "^0.13.7",
     "style-loader": "^2.0.0",
     "vis-react": "^0.5.1",

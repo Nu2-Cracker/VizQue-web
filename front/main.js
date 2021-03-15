@@ -13,9 +13,11 @@ function App() {
       <ThemeProvider>
         <Querys />
       </ThemeProvider>
+
       <div className="vis-react">
         <VisReact />
       </div>
+
     </div>
   )
 }
