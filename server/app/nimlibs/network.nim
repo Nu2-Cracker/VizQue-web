@@ -90,6 +90,11 @@ proc queryGetter(query: string): seq[string] =
 
   #このクエリで検索をかける
   var rep_query = query.replace(re"\s+", "%20")
+  #google先生に怒られた時はwikipedia(en)からとってくる
+  #jaとenを選べるようにしようか
+  # https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=killer%20whale
+
+  # var url = "http://suggestqueries.google.com/complete/search?output=toolbar&hl=ja&q=${query}" % {"query": rep_query}.newStringTable
   var url = "http://www.google.com/complete/search?hl=en&q=${query}&output=toolbar" % {"query": rep_query}.newStringTable
 
   # httpクライエントの作成
@@ -119,16 +124,12 @@ proc setParentNode(query:string) =
 
 
 
-
-
-
-
 #スタート
 #queryから元のノードを作成
 
 var querys: seq[string] = @["python"]
 
-const selectLebel: int = 5
+const selectLebel: int = 5 #多くても100とかに制限しようかな
 var levelTicket:int = 1
 while true:
 
@@ -165,8 +166,6 @@ while true:
 
     #querysに追加
     querys.add(q)
-
-
 
 
 

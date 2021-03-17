@@ -149,10 +149,7 @@ proc run_vizque(reader: string, level: string): string {.exportpy.} =
     l = "2"
   create_node(reader, node_id)
 
-
-
   var querys = createGraph_SearchQuery(reader)
-
 
   var i=2
 
