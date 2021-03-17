@@ -9,6 +9,18 @@ docker-compose exec nimslogic  sh -c 'figlet Dev-Env && figlet Completed.'
 
 #実行後
 
+#
+<<COMMENTOUT
+nimslogicコンテナに入る
+
+docker exec -it nim bash
+
+COMMENTOUT
+
+
+
+
+
 
 #ubicorn 起動
 << COMMENTOUT

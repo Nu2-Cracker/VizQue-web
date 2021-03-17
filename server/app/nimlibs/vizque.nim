@@ -121,12 +121,14 @@ proc querygetter(query: string): seq[string] =
 proc createGraph_SearchQuery(reader: string): seq[string]=
   #from側のidをセット
   from_id = node_id
+
   var querys: seq[string] = querygetter(reader)
 
 
   for query in querys:
     #from_idは、G.nodesのラベルとqueryが一致するものの
     #idを使用
+    #ここの処理でメモリーエラー起こしてるっぽいね
     var graph_data = G.nodes #G.nodesをdeep copy
     for n in graph_data:
       if n["label"] == query:
@@ -140,6 +142,7 @@ proc createGraph_SearchQuery(reader: string): seq[string]=
 #再起で書いてループ回数を指定するようにするか
 
 proc run_vizque(reader: string, level: string): string {.exportpy.} =
+
   G = new GraphDatas #初期化
   var l: string = level
   if l == "":
@@ -147,7 +150,10 @@ proc run_vizque(reader: string, level: string): string {.exportpy.} =
   create_node(reader, node_id)
 
 
+
   var querys = createGraph_SearchQuery(reader)
+
+
   var i=2
 
   while i < parseInt(l):
@@ -168,6 +174,7 @@ proc run_vizque(reader: string, level: string): string {.exportpy.} =
   return jsonData
 
 
+# let data = run_vizque("cpp metaprogramming", "")
 
 
 #test用

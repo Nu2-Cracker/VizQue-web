@@ -1,11 +1,11 @@
 let options = {
   layout: {
-    randomSeed: 350,
+    randomSeed: 350000,
     improvedLayout:true,
     clusterThreshold: 1500,
     hierarchical: {
       enabled:false,
-      levelSeparation: 150,
+      levelSeparation: 15000,
       nodeSpacing: 5000,
       treeSpacing: 20000,
       direction: "LR"
@@ -13,7 +13,7 @@ let options = {
     }
   },
   nodes: {
-    shape: "box",
+    shape: "dot",
     size: 30,
     borderWidth: 1.5,
     borderWidthSelected: 2,
@@ -30,7 +30,7 @@ let options = {
   },
   edges: {
     length: 10500000,
-    width: 0.5,
+    width: 2.0,
     color: {
       color: "#D3D3D3",
     },
