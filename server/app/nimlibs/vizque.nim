@@ -1,5 +1,3 @@
-# nim c -o:output_vizque -r vizque.nim
-#python にすると追記になる
 import
   httpClient,
   strtabs,
@@ -9,7 +7,8 @@ import
   tables,
   strutils,
   JSON,
-  nimpy
+  nimpy,
+  algorithm
 
 
 type
@@ -21,29 +20,41 @@ type
     nodes: SecTables
     edges: SecTables
 
-
+type
+  ParentNode = ref object
+    setn: QueryDatas
 
 var
-  node: QueryDatas = initTable[string, string]()
-  node_init = node
-  edge: QueryDatas = initTable[string, string]()
-  edge_init = edge
   graph = initTable[string, SecTables]()
-  # querylist: seq[string] = newSeq[string]()
   #Node
   node_id: int = 0
-  node_permission = true
-  #edge
-  from_id: int = 0
-  to_id: int = 0
 
 #オブジェクト定義
 var G:GraphDatas = new GraphDatas
+var Pnode: ParentNode = new ParentNode
+
+var searched: seq[string];
+
+proc `is`(a: string, b: string): bool =
+    return a == b
+
+proc `empty`(a:seq): bool =
+  if a.len == 0:
+    return true
 
 
 
-proc create_node(query: string, node_id: int) =
+proc create_node(query: string, node_id: int): QueryDatas =
   #queryからnodeを作成する
+  var node: QueryDatas = initTable[string, string]()
+  #[
+    既にnodeが存在する場合は、既存のnodeの追加はせず、既存のnodeを返す
+  ]#
+
+  for n in G.nodes:
+    if n["label"] == query:
+      return n
+
 
   #ノードの作成
   node["id"] = $node_id
@@ -51,43 +62,30 @@ proc create_node(query: string, node_id: int) =
   node["url"] = "https://www.google.com/search?q=${query}" % {"query": query}.newStringTable
   #nodesに格納
   G.nodes.add(node)
-  #ノードの初期化
-  node = node_init
+
+  return node
 
 
-proc create_edge(from_id: int, to_id: int) =
+
+proc create_edge(to_id: string) =
   #queryからedgeを作成する
-  edge["from"] = $from_id
-  edge["to"] = $to_id
+  var edge: QueryDatas = initTable[string, string]()
+
+  edge["from"] = Pnode.setn["id"]
+  edge["to"] = to_id
   #edgesに格納
   G.edges.add(edge)
-  #edgeの初期化
-  edge = edge_init
 
+proc queryGetter(query: string): seq[string] =
+  result=newSeq[string]()
 
-
-#no use
-
-
-
-proc check_label(query: string, node:SecTables ): int =
-  #既存のlabelと一致するかチェック=>一致する場合,
-  #to_id=既存のid, no=> to_id=現在のid+1を返す
-  for n in node:
-    if query == n["label"]:
-      node_permission = false #Nodeは作成しない
-      return parseInt(n["id"])
-
-  inc(node_id)
-  return node_id
-
-
-
-proc querygetter(query: string): seq[string] =
-  #検索結果を格納するsequence
-  var searchQuery = newSeq[string]()
-  #空白を埋めてget用URLの作成
+  #このクエリで検索をかける
   var rep_query = query.replace(re"\s+", "%20")
+  #google先生に怒られた時はwikipedia(en)からとってくる
+  #jaとenを選べるようにしようか
+  # https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=killer%20whale
+
+  # var url = "http://suggestqueries.google.com/complete/search?output=toolbar&hl=ja&q=${query}" % {"query": rep_query}.newStringTable
   var url = "http://www.google.com/complete/search?hl=en&q=${query}&output=toolbar" % {"query": rep_query}.newStringTable
 
   # httpクライエントの作成
@@ -97,89 +95,61 @@ proc querygetter(query: string): seq[string] =
   var body: string = response.body
   #xmlをパース
   let xmls = parseXml(body)
+
   #suggestion タグの取得
   var tag_suggestion = xmls.findAll("suggestion")
-  tag_suggestion = tag_suggestion[1..^1] #頭はqueryなので含まない
 
-  var graph_data = G.nodes #G.nodesをdeep copy
 
   for tag in tag_suggestion:
     let relationQuery = tag.attr("data") #tagからdata属性(関連キーワード)を取得
-
-    to_id = check_label(relationQuery, graph_data) #既存のlabelと一致するかチェック
-    if node_permission:
-      create_node(relationQuery, to_id) #trueならrelationqueryからnodeを作成
-    #from_idをfrom_id, to_idをto_idとしてedgeを作成
-    create_edge(from_id, to_id)
-
-    searchQuery.add(relationQuery)
-    node_permission = true #初期化
-
-  return searchQuery #検索クエリ候補を返す
+    if relationQuery is query: #queryと同じならスキップ
+      continue
+    result.add(relationQuery)
 
 
-proc createGraph_SearchQuery(reader: string): seq[string]=
-  #from側のidをセット
-  from_id = node_id
-
-  var querys: seq[string] = querygetter(reader)
+proc setParentNode(query:string) =
+  let pnode = create_node(query, node_id)
+  Pnode.setn = pnode
 
 
-  for query in querys:
-    #from_idは、G.nodesのラベルとqueryが一致するものの
-    #idを使用
-    #ここの処理でメモリーエラー起こしてるっぽいね
-    var graph_data = G.nodes #G.nodesをdeep copy
-    for n in graph_data:
-      if n["label"] == query:
-        from_id = parseInt(n["id"])
-        var _ = querygetter(query)
-
-  # queryはオブジェクト定義してオブジェクトに入れる方がいいかも
-  result=querys
 
 
-#再起で書いてループ回数を指定するようにするか
-
+#スタート
+#queryから元のノードを作成
 proc run_vizque(reader: string, level: string): string {.exportpy.} =
-
   G = new GraphDatas #初期化
-  var l: string = level
-  if l == "":
-    l = "2"
-  create_node(reader, node_id)
+  var level: string;
+  if level is "":
+    level = "5" #デフォルト値
+  var querys: seq[string] = @[reader]
 
-  var querys = createGraph_SearchQuery(reader)
+  let selectLevel: int = parseInt(level) #多くても100とかに制限しようかな
+  var levelTicket:int = 1
+  while true:
+    if empty(querys) or levelTicket > selectLevel:
+      break
 
-  var i=2
+    querys.reverse()
+    var query = pop querys
+    querys.reverse()
+    setParentNode(query) #親ノードの設定
+    inc node_id
 
-  while i < parseInt(l):
-    var query_sets = newSeq[string]()
-    for i in querys:
-      let q = createGraph_SearchQuery(i)
-      if len(q) != 0:
-        for j in q:
-          if j notin query_sets:
-            query_sets.add(j)
-    querys = query_sets
-    inc i
+    searched = queryGetter(query)
+    inc levelTicket
+    for q in searched:
+      let chiled = create_node(q, node_id) #子ノードの設定
+      inc node_id
+      let to_id: string = chiled["id"]
+      create_edge(to_id)
+      querys.add(q)
 
   graph["nodes"] = G.nodes
   graph["edges"] = G.edges
   let to_json = %* graph
-  var jsonData: string = to_json.pretty(indent=5)
-  return jsonData
+  result= to_json.pretty(indent=5)
 
 
-# let data = run_vizque("cpp metaprogramming", "")
-
-
-#test用
-#内容
-# インスタンスの初期化
-
-# nim c -r -o:/vizque ./vizque.nim
-# nim c --threads:on --app:lib --out:vizque.so vizque
 
 
 

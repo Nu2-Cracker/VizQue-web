@@ -59,7 +59,6 @@ async def calc_network_get() -> dict:
 async def calc_network_post(q: dict) -> dict:
     keyword = q["data"]
     level = q["level"]
-    print(keyword, level)
     jsonData = vizque.run_vizque(keyword, level)
     jsonData = json.loads(jsonData)
     query[0] = jsonData
