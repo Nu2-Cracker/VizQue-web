@@ -8,7 +8,7 @@
 # Install  
 
 Please copy follow command and paste your terminal
->git clone -b vizque-nim https://github.com/Runacy/VizQue-web.git && \  
+>git clone  https://github.com/Runacy/VizQue-web.git && \  
 >cd VizQue && \  
 >sh setup.sh
 
